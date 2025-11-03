@@ -17,4 +17,3 @@ Programmer Goals: (We have 4 weeks left to work on the project - As of 10/30/202
 Current progress:
 - Coded all of the weeks out, just need to do some testing and debugging on all of it.
 - Play around and possibly add a debug mode using some of the other features the robto has to offer (Ex. the ligth sensors and the button functions)
-- 
