@@ -7,6 +7,8 @@ First verision (Nightlight Demo) is testing the fucntions to be used for the fin
 The final (Overtime Nightlight) is having the robot guide a user in the dark around a classroom to do tasks in the dark, as if the person is working a long day.
 Name is subject to change 
 
+Note: I realized that the code in the .lab files are not easy to read. I will fix that in the future. Please be patient :>
+
 Programmer Goals: (We have 2 weeks left to work on the project - As of 11/13/2025)
 - W9: Code the paths for navigating to each door, and to each task (Done)
 - W10: Testing pathing to make sure it works every time	(Done)
