@@ -7,13 +7,21 @@ First verision (Nightlight Demo) is testing the fucntions to be used for the fin
 The final (Overtime Nightlight) is having the robot guide a user in the dark around a classroom to do tasks in the dark, as if the person is working a long day.
 Name is subject to change 
 
-Programmer Goals: (We have 4 weeks left to work on the project - As of 10/30/2025)
-- Week 9: Play with the robot and make sure the robot can navigate between the doors
-    - Possibly use new button function??
-- Week 10: Program path to tasks starting from door A
-- Week 11: Program path starting from door B
-- Week 12: Program robot going from task to their respective opposite doors
+Programmer Goals: (We have 2 weeks left to work on the project - As of 11/13/2025)
+- W9: Code the paths for navigating to each door, and to each task (Done)
+- W10: Testing pathing to make sure it works every time	(Done)
+- W11: Use new features like buttons and/or light sensor for new functions, Implement them. (No dependency on Laptop/Phone input)
+-     Add more user input (choose which task to do first)
+-     Use light sensor to check for user rather than tap (“tap” for above bullet)
+-     Add random number system to have robot go in slightly different paths (To seem less robotic)
+- W12: Testing again
 
 Current progress:
-- Coded all of the weeks out, just need to do some testing and debugging on all of it.
+- Coded all of the paths
+- Debugg all the paths
 - Play around and possibly add a debug mode using some of the other features the robto has to offer (Ex. the ligth sensors and the button functions)
+
+Issues Encountered:
+-    Getting the angles right for turning directions (Solved)
+-    Fixing a traction/friction issue with using the robot on the classroom floors
+-        The floor is bumpy and very smooth, and the outer shell of the Sphero Bolt+ is a very smooth plastic/acrylic. Smooth + Smooth != Good Traction
