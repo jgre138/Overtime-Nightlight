@@ -11,9 +11,9 @@ Programmer Goals: (We have 2 weeks left to work on the project - As of 11/13/202
 - W9: Code the paths for navigating to each door, and to each task (Done)
 - W10: Testing pathing to make sure it works every time	(Done)
 - W11: Use new features like buttons and/or light sensor for new functions, Implement them. (No dependency on Laptop/Phone input)
--     Add more user input (choose which task to do first)
--     Use light sensor to check for user rather than tap (“tap” for above bullet)
--     Add random number system to have robot go in slightly different paths (To seem less robotic)
+  - Add more user input (choose which task to do first)
+  - Use light sensor to check for user rather than tap (“tap” for above bullet)
+  - Add random number system to have robot go in slightly different paths (To seem less robotic)
 - W12: Testing again
 
 Current progress:
@@ -24,4 +24,4 @@ Current progress:
 Issues Encountered:
 -    Getting the angles right for turning directions (Solved)
 -    Fixing a traction/friction issue with using the robot on the classroom floors
--        The floor is bumpy and very smooth, and the outer shell of the Sphero Bolt+ is a very smooth plastic/acrylic. Smooth + Smooth != Good Traction
+  -    Floor is bumpy and very smooth, and the outer shell of the Sphero Bolt+ is a very smooth plastic/acrylic. Smooth + Smooth != Good Traction
