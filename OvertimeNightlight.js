@@ -1,6 +1,6 @@
 /*  
     Overtime Nightlight 
-    Code written by Jennifer Green
+    Code written by Jennifer Greene
     For group project in CS-104
     Current date: 11/7/2025
     GitHub Repository: https://github.com/jgre138/Overtime-Nightlight
@@ -240,4 +240,5 @@ registerMatrixAnimation({
     fps: 10,
     transition: MatrixAnimationTransition.None
 });
+
 
