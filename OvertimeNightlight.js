@@ -66,35 +66,35 @@ async function getUserChoice() {
             playMatrixAnimation(1, false); // show tap detected
         }
 
-        await delay(0.1);   // small step delay
-        elapsed += 0.1;     // manually track time (Sphero-safe)
+        await delay(0.1);  
+        elapsed += 0.1;    
     }
 
-    if (taps === 0) return "done";
     if (taps === 1) return "task1";
     if (taps === 2) return "task2";
-    return "door";
+    if (taps === 3) return "door";
+    return "done";
 }
 
 //  --- CHECK USER ---
 //optimize this 
 async function checkForUser() { //  Checks for user input to continue
-    setMainLed({ r: 255, g: 255, b: 255 }); // searching animation
+    setMainLed({ r: 255, g: 255, b: 255 }); 
     await speak("Checking for user at this door. Shine your flashlight if you're here.", false);
     let found = await detectLightFlash(WAIT_TIME);
     if (found) {
-        setMainLed({ r: 0, g: 255, b: 0 }); // checkmark animation
+        setMainLed({ r: 0, g: 255, b: 0 }); // green
         await speak("User found at this door!", false);
         doorUser = 'A'; //Make sure the user is at A
         return true;
     }
     // --- NOT AT A -> GO TO B ---
-    setMainLed({ r: 255, g: 128, b: 0 }); // failed animation
+    setMainLed({ r: 255, g: 128, b: 0 }); // change this later
     await speak("No user at this door. Moving to the other door", false);
     await goToDoorB();
     await delay(0.5);
 
-    setMainLed({ r: 255, g: 255, b: 255 }); // searching animation
+    setMainLed({ r: 255, g: 255, b: 255 }); // white
     await speak("Checking for user at this door. Shine your flashlight if you're here.", false);
     found = await detectLightFlash(WAIT_TIME);
     if (found) {
@@ -104,7 +104,7 @@ async function checkForUser() { //  Checks for user input to continue
         return true;
     }
     // --- NOT AT B EITHER -> STOP PROGRAM ---
-    setMainLed({ r: 255, g: 0, b: 0 }); // red error
+    setMainLed({ r: 255, g: 0, b: 0 }); // red 
     await speak("I could not find the user at either door. Stopping program.", false);
     return false;
 }
@@ -168,7 +168,7 @@ async function goFromTask(){
 }
 
 //  --- MAIN PROCESS ---
-async function startWork() { // need to rework this entire function
+async function startWork() { // need to make sure this works
     await speak("Good afternoon, ready to do some work?", false);
     let userHere = await checkForUser();
     if (!userHere) return;
@@ -207,10 +207,10 @@ async function startWork() { // need to rework this entire function
             let confirmed = await detectLightFlash(TASK_TIME);
 
             while (!confirmed) {
-                playMatrixAnimation(3, false); // stop / timeout animation
+                playMatrixAnimation(3, false); // 
                 await speak("No confirmation detected, let me give you a little more time.", false);
             }
-            playMatrixAnimation(0, false); // checkmark
+            playMatrixAnimation(0, false); // 
                 await speak("Task 1 complete.", false);
         }
 
@@ -223,10 +223,10 @@ async function startWork() { // need to rework this entire function
             let confirmed = await detectLightFlash(TASK_TIME);
 
             while (!confirmed) {
-                playMatrixAnimation(3, false); // stop / timeout animation
+                playMatrixAnimation(3, false); //
                 await speak("No confirmation detected, let me give you a little more time.", false);
             }
-            playMatrixAnimation(0, false); // checkmark
+            playMatrixAnimation(0, false); // 
                 await speak("Task 1 complete.", false);
         }
 
@@ -238,8 +238,30 @@ async function startWork() { // need to rework this entire function
 }
 
 //  ---  UNIT TESTS --- 
-async function testingLight(){
+async function testingLight() {
+    let lightTest = detectLightFlash(WAIT_TIME);
 
+    if (lightTest){
+        setMainLed({ r: 255, g: 255, b: 255 });
+        await speak("LIGHT! :>")
+    }
+}
+
+async function testingChoice(){
+    let choice = getUserChoice();
+
+    if (choice === "door"){
+        await speak("door");
+    }
+    else if(choice === "task1"){
+        await speak("task 1");
+    }
+    else if (choice === "task2") {
+        await speak("task 2");
+    }
+    else if (choice === "done") {
+        await speak("done");
+    }
 }
 
 
@@ -295,4 +317,5 @@ registerMatrixAnimation({
     fps: 10,
     transition: MatrixAnimationTransition.None
 });
+
 
