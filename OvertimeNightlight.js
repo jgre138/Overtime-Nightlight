@@ -2,21 +2,19 @@
     Overtime Nightlight 
     Code written by Jennifer Greene
     For group project in CS-104
-    Current date: 11/7/2025
+    Current date: 11/19/2025
     GitHub Repository: https://github.com/jgre138/Overtime-Nightlight
 */
 
-
 //  --- VARIABLES ---
 const WAIT_TIME = 10;             // # of seconds to wait for tap
-const TASK_TIME = 30;             //30 seconds for demo purposes (might change to )
+const TASK_TIME = 30;             // 30 seconds for demo purposes, uses this to wait for user confimation on completion of task
 const TAP_THRESHOLD = 1.05;       //  G threshold for tap detection
-let userFound = false;
-let tripDone = false;
-let doorUser = 'A';             //This is the door the robot will ALWAYS start at for this demo.
-
+let doorUser = 'A';               //This is to keep track of what door the user starts at.
+let currLocation = "A"                // this is to keep track of which task the user is at.
 
 //  --- TAP FUNCTION ---
+// Use for user choice
 async function detectTap(timeout) { //  Detect tap via accelerometer spike (DO NOT TOUCH, THIS WORKS)
     let a;
     let mag;
@@ -33,27 +31,86 @@ async function detectTap(timeout) { //  Detect tap via accelerometer spike (DO N
     return false; // no change detected
 }
 
-//  --- CHECK USER ---
-async function checkForUser() { //  Checks for user input to continue
-    setMainLed({ "r": 255, "g": 255, "b": 255 }); //  white flash;
-    let tapped = await detectTap(WAIT_TIME);
-    if (tapped) {
-        setMainLed({ "r": 0, "g": 255, "b": 0 }); //  green confirm;
-        await speak("User is here! Lets go!", false); 
-        //  user is at A along with robot;
-        userFound = true;
-    } else {
-        setMainLed({ "r": 255, "g": 0, "b": 0 }); //  red timeout;
-        await speak("User is not here, let me check the other door.", false); 
-        // User is at the other door
-        userFound = false;
+//  --- LIGHT FUNCTION ---
+//user for confirmation and to start user interaction
+async function detectLightFlash(timeout) {
+    let baseline = getAmbientLight();
+    let elapsed = 0;
+    while (elapsed < timeout) {
+        let current = getAmbientLight();
+
+        // Bright flashlight → confirm
+        if (current > baseline + 30) {
+            return true;
+        }
+        await delay(0.1);
+        elapsed += 0.1;
     }
-    
+    return false;
 }
 
-//  --- DOOR MOVEMENT ---
+//  --- USER CHOICE ---
+async function getUserChoice() {
+    await speak("Tap me to choose your destination.", false);
+    await speak("One tap: Task 1. Two taps: Task 2. Three taps: Other door.", false);
+
+    let taps = 0;
+    let elapsed = 0;
+
+    // We loop until WAIT_TIME seconds have passed
+    while (elapsed < WAIT_TIME) {
+
+        // detectTap already handles its own short wait
+        if (await detectTap(0.4)) {
+            taps++;
+            playMatrixAnimation(1, false); // show tap detected
+        }
+
+        await delay(0.1);   // small step delay
+        elapsed += 0.1;     // manually track time (Sphero-safe)
+    }
+
+    if (taps === 0) return "done";
+    if (taps === 1) return "task1";
+    if (taps === 2) return "task2";
+    return "door";
+}
+
+//  --- CHECK USER ---
+//optimize this 
+async function checkForUser() { //  Checks for user input to continue
+    setMainLed({ r: 255, g: 255, b: 255 }); // searching animation
+    await speak("Checking for user at this door. Shine your flashlight if you're here.", false);
+    let found = await detectLightFlash(WAIT_TIME);
+    if (found) {
+        setMainLed({ r: 0, g: 255, b: 0 }); // checkmark animation
+        await speak("User found at this door!", false);
+        doorUser = 'A'; //Make sure the user is at A
+        return true;
+    }
+    // --- NOT AT A -> GO TO B ---
+    setMainLed({ r: 255, g: 128, b: 0 }); // failed animation
+    await speak("No user at this door. Moving to the other door", false);
+    await goToDoorB();
+    await delay(0.5);
+
+    setMainLed({ r: 255, g: 255, b: 255 }); // searching animation
+    await speak("Checking for user at this door. Shine your flashlight if you're here.", false);
+    found = await detectLightFlash(WAIT_TIME);
+    if (found) {
+        setMainLed({ r: 0, g: 255, b: 0 }); // green
+        await speak("User found at this door", false);
+        doorUser = 'B';
+        return true;
+    }
+    // --- NOT AT B EITHER -> STOP PROGRAM ---
+    setMainLed({ r: 255, g: 0, b: 0 }); // red error
+    await speak("I could not find the user at either door. Stopping program.", false);
+    return false;
+}
+
+//  --- DOOR MOVEMENT --- (need to modify if going to start at any place)
 async function goToDoorA() {
-    // add a special light to signal its searching
     await rollToDistance(0, 50, 100); //39 in
     await rollToDistance(270, 50, 398); //153 In +
     await rollToDistance(180, 50, 40); //15.5 in
@@ -64,7 +121,6 @@ async function goToDoorA() {
 }
 
 async function goToDoorB() {
-    // add a special light to signal its searching
     await rollToDistance(0, 50, 100); //39 in
     await rollToDistance(90, 50, 245); //96 in + 1
     await rollToDistance(180, 50, 40); //15.5 in
@@ -113,73 +169,77 @@ async function goFromTask(){
 
 //  --- MAIN PROCESS ---
 async function startWork() { // need to rework this entire function
-    while (tripDone != true) {
-        await speak("Good afternoon, ready to do some work?", false);
-        await checkForUser();
-        if (userFound) { // will not change the door user is currently at.
+    await speak("Good afternoon, ready to do some work?", false);
+    let userHere = await checkForUser();
+    if (!userHere) return;
+
+    let destination = await getUserChoice();
+
+    do {
+
+        if (destination === "done") {
+            await speak("Okay, we're finished.", false);
+            playMatrixAnimation(0, false);
+            return;
+        }
+
+        if (destination === "door") {
+            await speak("Heading to the other door.", false);
+
+            if (doorUser === "A") {
+                await goToDoorB();
+                doorUser = "B";
+            } else {
+                await goToDoorA();
+                doorUser = "A";
+            }
+
+            await speak("We have arrived. Program complete.", false);
+            return;
+        }
+
+        if (destination === "task1") {
+            await speak("Going to Task 1.", false);
             await goToTask1();
-            let taskComplete = detectTap(TASK_TIME);
-            //add stuff here lol
-            
-            tripDone = true;
-            await delay(2);
-            playMatrixAnimation(0, false);// Checkmark
-            await delay(3);
-            await speak("Shuttle complete!", false);
-        } 
-        else if (!userFound && doorUser == 'B'){  
-            //If they dont catch user at door A and doent find them at B
-            await goToDoorA(); //Goes to other door to find the user
-            await delay(1);
-            doorUser = 'A';
+
+            await speak("Shine your flashlight when you're done.", false);
+
+            let confirmed = await detectLightFlash(TASK_TIME);
+
+            while (!confirmed) {
+                playMatrixAnimation(3, false); // stop / timeout animation
+                await speak("No confirmation detected, let me give you a little more time.", false);
+            }
+            playMatrixAnimation(0, false); // checkmark
+                await speak("Task 1 complete.", false);
         }
-        else {
-            await goToDoorB();
-            doorUser = 'B';
+
+        if (destination === "task2") {
+            await speak("Going to Task 2.", false);
+            await goTotask2();
+
+             await speak("Shine your flashlight when you're done.", false);
+
+            let confirmed = await detectLightFlash(TASK_TIME);
+
+            while (!confirmed) {
+                playMatrixAnimation(3, false); // stop / timeout animation
+                await speak("No confirmation detected, let me give you a little more time.", false);
+            }
+            playMatrixAnimation(0, false); // checkmark
+                await speak("Task 1 complete.", false);
         }
-    } 
-}
-async function doorTest(){  //WORKING
-    await speak("Going to door B");
-    await delay(1);
-    await goToDoorB();
-    await delay(1);
-    await speak("Made it to door B");
-    await delay(10)
-    await goToDoorA();
-    await delay(1)
-    await speak("Made it to door A")
 
+        // 4. ASK WHERE TO GO *NEXT*
+        destination = await getUserChoice();
+
+    } while (true); // exit conditions happen inside via returns
+    
 }
 
-async function testTaskRouteA(){
-    doorUser = 'A'
-    await goToTask1();
-    await delay(1);
-    await speak("made it to task 1");
-    await delay(1)
-    await goTotask2();
-    await delay(1);
-    await speak("made it to task 2");
-    await delay(1)
-    await goFromTask();
-    await delay(1);
-    await speak("made it to other door");
-}
+//  ---  UNIT TESTS --- 
+async function testingLight(){
 
-async function testTaskRouteB(){
-    doorUser = 'B'
-    await goToTask1();
-    await delay(1);
-    await speak("made it to task 1");
-    await delay(1)
-    await goTotask2();
-    await delay(1);
-    await speak("made it to task 2");
-    await delay(1)
-    await goFromTask();
-    await delay(1);
-    await speak("made it to other door");
 }
 
 
@@ -187,12 +247,7 @@ async function testTaskRouteB(){
 async function startProgram() {
     //  ALWAYS start at Door A (A is Home). 
     //  In this case, Door A is the one by the classroom PC.
-    await testTaskRouteA();
-}
-
-async function OnButton(){ // make this a debug mode???
-    await speak("Process being interupted, apologies.")
-    tripDone = true;
+    await startWork();
 }
 
 //  use for future refrence
@@ -240,5 +295,4 @@ registerMatrixAnimation({
     fps: 10,
     transition: MatrixAnimationTransition.None
 });
-
 
