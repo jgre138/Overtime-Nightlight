@@ -6,7 +6,7 @@ The original idea was to use the robot to guide the user along a set path in the
 First verision (Nightlight Demo) is testing the fucntions to be used for the final product.
 The final (Overtime NightlightFINAL) is having the robot guide a user in the dark around a classroom to do tasks in the dark, as if the person is working a long day.
 Name is subject to change 
-## CURRENT VERSION: OvertimeNigthlightVer2
+## CURRENT VERSION: OvertimeNigthlightVer3
 A readable JavaScript file has been added of the code for easy viewing. Will nees to update the .lab file once project is tested. The other two JavaScript files are old and now unused code I wanted to keep record of
 
 
