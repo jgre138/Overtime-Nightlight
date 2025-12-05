@@ -9,6 +9,9 @@ Name is subject to change
 ## CURRENT VERSION: OvertimeNigthlightVer3
 A readable JavaScript file has been added of the code for easy viewing. Will nees to update the .lab file once project is tested. The other two JavaScript files are old and now unused code I wanted to keep record of
 
+## Ill update this file once finals are over. 
+I have a final version that works fully as intended
+
 
 Programmer Goals: (We have 1 week left to work on the project - As of 11/20/2025)
 - W9: Code the paths for navigating to each door, and to each task (Done)
