@@ -1,17 +1,14 @@
 # Overtime-Nightlight
 My Sphero Bolt+ Robot Project done for CS 104 Intro to Problem Solving at Monmouth University
 
-The original idea was to use the robot to guide the user along a set path in the dark using the LED matrix to show signals to the user when its moving and to speak when its beginning to move or it has completed the task. For the final version, there was more to the movement added and more of a reason to the robot guiding a user, as the user needs to go around the room to task spots, where they would do work.
+The original idea was to use the robot to guide the user along a set path in the dark using the LED matrix to show signals to the user when its moving and to speak when its beginning to move or it has completed the task. For the final version, there was more to the movement added and more of a reason to the robot guiding a user, as the user needs to go around the room to task spots, where they would do work. The user can choose where they want to start or if they want to do anything at all. Plus the robot is able to "find" the user
 
 First verision (Nightlight Demo) is testing the fucntions to be used for the final product.
 The final (Overtime NightlightFINAL) is having the robot guide a user in the dark around a classroom to do tasks in the dark, as if the person is working a long day.
-Name is subject to change 
-## CURRENT VERSION: OvertimeNigthlightVer3
-A readable JavaScript file has been added of the code for easy viewing. Will nees to update the .lab file once project is tested. The other two JavaScript files are old and now unused code I wanted to keep record of
 
-## Ill update this file once finals are over. 
-I have a final version that works fully as intended
+Current Version: OvertimeNightlightFINAL.js or .lab
 
+This Project is complete as of 12/7/2025
 
 Programmer Goals: (We have 1 week left to work on the project - As of 11/20/2025)
 - W9: Code the paths for navigating to each door, and to each task (Done)
